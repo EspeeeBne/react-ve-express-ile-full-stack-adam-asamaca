@@ -60,7 +60,7 @@ cd ../front-end
 npm install --legacy-peer-deps
 ```
 
-### Adım 5: Veritabanını Başlatın
+### Adım 5: Veritabanını Aktarın
 
 Back-end dizininde aşağıdaki komutla veritabanını aktarın:
 
@@ -70,25 +70,7 @@ npm run dbaktar
 
 Bu komut, MongoDB'ye gerekli verileri otomatik olarak aktaracaktır.
 
-### Adım 6: Uygulamayı Başlatın
-
-Back-end ve front-end'i ayrı terminallerde çalıştırın:
-
-#### Back-end:
-
-```
-cd back-end
-npm start
-```
-
-#### Front-end:
-
-```
-cd front-end
-npm start
-```
-
-### Adım 7: Production Build (Opsiyonel)
+### Adım 7: Production Build
 
 Front-end için production build alın ve back-end'e aktarın:
 
