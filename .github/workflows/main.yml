@@ -1,0 +1,42 @@
+name: CI/CD for React and Express
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup-and-test:
+    name: Setup and Test Frontend & Backend
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        directory: [front-end, back-end]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm install --legacy-peer-deps
+      working-directory: ${{ matrix.directory }}
+
+    - name: Run Tests
+      run: npm test
+      working-directory: ${{ matrix.directory }}
+
+    - name: Build and Start
+      if: github.ref == 'refs/heads/main'
+      run: |
+        npm start
+      working-directory: ${{ matrix.directory }}
