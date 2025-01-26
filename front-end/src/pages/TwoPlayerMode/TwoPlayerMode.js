@@ -93,6 +93,13 @@
     const wrongCount = gameData ? gameData.wrongLetters?.length : 0;
     const displayWord = gameData ? getDisplayWord(gameData.sentence, gameData.discoveredLetters) : '';
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (guessLetter.trim()) {
+        guess();
+        }
+    };
+
     return (
         <Box
         component={motion.div}
@@ -191,35 +198,37 @@
                 </>
                 ) : (
                 <Box sx={{ mt: 2 }}>
+                    <form onSubmit={handleSubmit}>
                     <Grid2 container spacing={2} alignItems="center">
-                    <Grid2 item xs={12} sm={6}>
+                        <Grid2 item xs={12} sm={6}>
                         <TextField
-                        label={t('guessALetter')}
-                        variant="outlined"
-                        value={guessLetter}
-                        onChange={(e) => {
+                            label={t('guessALetter')}
+                            variant="outlined"
+                            value={guessLetter}
+                            onChange={(e) => {
                             const value = e.target.value;
                             if (/^[a-zA-ZçğıöşüÇĞIÖŞÜ]?$/.test(value)) {
-                            setGuessLetter(value.toLocaleUpperCase('tr-TR'));
+                                setGuessLetter(value.toLocaleUpperCase('tr-TR'));
                             }
-                        }}
-                        sx={{ width: '100%' }}
-                        inputProps={{ maxLength: 1 }}
+                            }}
+                            sx={{ width: '100%' }}
+                            inputProps={{ maxLength: 1 }}
                         />
-                    </Grid2>
-                    <Grid2 item xs={12} sm={6}>
+                        </Grid2>
+                        <Grid2 item xs={12} sm={6}>
                         <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={guess}
-                        disabled={guessing}
-                        startIcon={guessing && <CircularProgress size={20} />}
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            disabled={guessing}
+                            startIcon={guessing && <CircularProgress size={20} />}
                         >
-                        {guessing ? t('guessing') : t('guess')}
+                            {guessing ? t('guessing') : t('guess')}
                         </Button>
+                        </Grid2>
                     </Grid2>
-                    </Grid2>
+                    </form>
                 </Box>
                 )}
 
