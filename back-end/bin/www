@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+var app = require('../app');
+var debug = require('debug')('adam-asiyoruz-backend:server');
+var http = require('http');
+var mongoose = require('mongoose');
+var fs = require('fs');
+var path = require('path');
+
+require('dotenv').config();
+
+const { version, author, license, name } = require('../package.json');
+
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+
+var server = http.createServer(app);
+
+
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.info(" ✔️  Database bağlantısı başarılı.");
+    startServer();
+  })
+  .catch(err => {
+    console.error(" ❌  Database bağlantısı başarısız:", err);
+    process.exit(1);
+  });
+
+
+function startServer() {
+  server.listen(port, () => {
+    console.info(" ------------------------------------");
+    console.info(` 🎉 Sunucu dinlemede: PORT = ${port}`);
+    console.info(` ℹ️  NODE_ENV:   ${process.env.NODE_ENV}`);
+    console.info(` ℹ️  Service Name: ${name}`);
+    console.info(` ℹ️  Version:    ${version}`);
+    console.info(` ℹ️  Author:     ${author}`);
+    console.info(` ℹ️  License:    ${license}`);
+    console.info(" ------------------------------------");
+    if (process.env.NODE_ENV === 'production') {
+      const clientBuildPath = path.join(__dirname, '../public');
+      if (fs.existsSync(clientBuildPath)) {
+        console.info(" ✔️  Client build dosyası mevcut.");
+      } else {
+        console.info(" ❌  Client build dosyası bulunamadı!");
+      }
+    }
+  });
+}
+
+server.on('error', onError);
+
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+}
+
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(' ❌  ' + bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(' ❌  ' + bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
