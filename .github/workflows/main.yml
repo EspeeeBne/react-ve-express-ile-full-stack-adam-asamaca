@@ -1,4 +1,4 @@
-name: CI/CD for React and Express
+name: CI/CD Workflow
 
 on:
   push:
@@ -9,45 +9,48 @@ on:
       - main
 
 jobs:
-  setup-and-test:
-    name: Setup and Test Frontend & Backend
+  frontend:
+    name: Frontend Build
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        directory: [front-end, back-end]
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18
-        cache: 'npm'
+        node-version: '18'
 
-    - name: Install Dependencies
-      run: npm install --legacy-peer-deps
-      working-directory: ${{ matrix.directory }}
-
-    - name: Run Tests
+    - name: Install dependencies
       run: |
-        if [ -f package.json ]; then
-          npm test || echo "Testler başarısız oldu ama işlem devam ediyor."
-        else
-          echo "package.json bulunamadı, testler çalıştırılamadı."
-          exit 1
-        fi
-      working-directory: ${{ matrix.directory }}
+        npm install --legacy-peer-deps
+      working-directory: ./front-end
 
-    - name: Build and Start
-      if: github.ref == 'refs/heads/main'
+    - name: Build project
       run: |
-        if [ -f package.json ]; then
-          npm start
-        else
-          echo "package.json bulunamadı, uygulama başlatılamadı."
-          exit 1
-        fi
-      working-directory: ${{ matrix.directory }}
+        npm run build
+      working-directory: ./front-end
+
+  backend:
+    name: Backend Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        npm install --legacy-peer-deps
+      working-directory: ./back-end
+
+    - name: Start backend
+      run: |
+        npm start
+      working-directory: ./back-end
