@@ -31,26 +31,48 @@ mongoose
   });
 
 
-function startServer() {
-  server.listen(port, () => {
-    console.info(" ------------------------------------");
-    console.info(` 🎉 Sunucu dinlemede: PORT = ${port}`);
-    console.info(` ℹ️  NODE_ENV:   ${process.env.NODE_ENV}`);
-    console.info(` ℹ️  Service Name: ${name}`);
-    console.info(` ℹ️  Version:    ${version}`);
-    console.info(` ℹ️  Author:     ${author}`);
-    console.info(` ℹ️  License:    ${license}`);
-    console.info(" ------------------------------------");
-    if (process.env.NODE_ENV === 'production') {
-      const clientBuildPath = path.join(__dirname, '../public');
-      if (fs.existsSync(clientBuildPath)) {
-        console.info(" ✔️  Client build dosyası mevcut.");
+  const instance = process.env.NODE_APP_INSTANCE;
+  const isCluster = instance !== undefined && instance !== '0';
+  const isPm2 = 'PM2_HOME' in process.env || instance !== undefined;
+
+  function startServer() {
+    server.listen(port, () => {
+      console.info(" ------------------------------------");
+      console.info(` 🎉 Sunucu dinlemede: PORT = ${port}`);
+      console.info(` ℹ️  NODE_ENV:   ${process.env.NODE_ENV}`);
+      console.info(` ℹ️  Service Name: ${name}`);
+      console.info(` ℹ️  Version:    ${version}`);
+      console.info(` ℹ️  Author:     ${author}`);
+      console.info(` ℹ️  License:    ${license}`);
+
+      if (isPm2) {
+        if (isCluster) {
+          console.info(` 🚀 PM2 Cluster Mode ile çalışıyor.`);
+          console.info(` 💅 PM2 Cluster Instance ID: ${instance}`);
+          if (instance === '0') {
+            console.info(` 🔗 PM2 Cluster Link: http://localhost:${port}`);
+          }
+        } else {
+          console.info(` 🚀 PM2 Fork Mode ile çalışıyor.`);
+          console.info(` 🔗 PM2 Fork Link: http://localhost:${port}`);
+        }
       } else {
-        console.info(" ❌  Client build dosyası bulunamadı!");
+        console.info(` 🔗 Seni de unutmadım pm2 kullanmayan kardeşim al bakalım klasik Node Link: http://localhost:${port}`);
       }
-    }
-  });
-}
+      console.info(" ------------------------------------");
+
+      if (process.env.NODE_ENV === 'production') {
+        const clientBuildPath = path.join(__dirname, '../public');
+        if (fs.existsSync(clientBuildPath)) {
+          console.info(" ✔️  Client build dosyası mevcut.");
+        } else {
+          console.info(" ❌  Client build dosyası bulunamadı!");
+        }
+      }
+    });
+  }
+
+
 
 server.on('error', onError);
 

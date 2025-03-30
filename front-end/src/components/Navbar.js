@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
-  Typography,
   IconButton,
+  Typography,
   Box,
+  Button,
   Modal,
   Select,
   MenuItem,
   useMediaQuery,
-  Tooltip,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
@@ -25,80 +25,96 @@ function Navbar({ darkMode, toggleTheme }) {
   const { t, i18n } = useTranslation();
 
   const [languageModalOpen, setLanguageModalOpen] = useState(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
-  };
-
-  const ThemeIcon = darkMode ? WbSunnyIcon : NightlightIcon;
-
-  const appBarVariants = {
-    light: { backgroundColor: theme.palette.background.paper, transition: { duration: 0.5 } },
-    dark: { backgroundColor: theme.palette.background.paper, transition: { duration: 0.5 } },
-  };
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
+    setLanguageModalOpen(false);
   };
 
   return (
     <>
-      <AnimatePresence>
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          variants={appBarVariants}
+      <AppBar
+        position="sticky"
+        sx={{
+          boxShadow: 3,
+          backgroundColor: theme.palette.background.default,
+          transition: 'background-color 0.5s ease, color 0.5s ease',
+        }}
+      >
+        <Toolbar
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingX: { xs: 1, sm: 2 },
+          }}
         >
-          <AppBar
-            position="static"
-            elevation={0}
-            sx={{
-              backgroundColor: theme.palette.background.paper,
-              color: theme.palette.text.primary,
-              transition: 'background-color 0.5s ease',
-            }}
-          >
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
               <Typography
                 variant="h6"
-                component={Link}
-                to="/"
                 sx={{
                   fontWeight: 'bold',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  '&:hover': { opacity: 0.8 },
+                  color: theme.palette.text.primary,
                 }}
               >
                 {t('appTitle')}
               </Typography>
+            </Link>
+          </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Tooltip title={darkMode ? t('lightMode') : t('darkMode')}>
-                  <IconButton onClick={toggleTheme} color="inherit" sx={{ mr: 1 }}>
-                    <ThemeIcon />
-                  </IconButton>
-                </Tooltip>
+          <Box display="flex" alignItems="center" gap={2}>
+            <IconButton onClick={toggleTheme} sx={{ color: theme.palette.text.primary }}>
+              <AnimatePresence mode="wait" initial={false}>
+                {darkMode ? (
+                  <motion.div
+                    key="light"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <WbSunnyIcon />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="dark"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <NightlightIcon />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </IconButton>
 
-                <Tooltip title={t('changeLanguage')}>
-                  <IconButton onClick={() => setLanguageModalOpen(true)} color="inherit">
-                    <TranslateIcon />
-                    {!isMobile && (
-                      <Typography variant="body1" sx={{ ml: 1 }}>
-                        {t('changeLanguage')}
-                      </Typography>
-                    )}
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Toolbar>
-          </AppBar>
-        </motion.div>
-      </AnimatePresence>
+            {!isMobile ? (
+              <Button
+                onClick={() => setLanguageModalOpen(true)}
+                startIcon={<TranslateIcon />}
+                variant="outlined"
+                sx={{
+                  color: theme.palette.text.primary,
+                  textTransform: 'none',
+                  borderColor: theme.palette.text.primary,
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                    borderColor: theme.palette.text.primary,
+                  },
+                }}
+              >
+                {t('changeLanguage')}
+              </Button>
+            ) : (
+              <IconButton onClick={() => setLanguageModalOpen(true)} sx={{ color: theme.palette.text.primary }}>
+                <TranslateIcon />
+              </IconButton>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
 
       <Modal
         open={languageModalOpen}
@@ -110,80 +126,43 @@ function Navbar({ darkMode, toggleTheme }) {
           backdropFilter: 'blur(5px)',
         }}
       >
-        <AnimatePresence>
-          {languageModalOpen && (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={modalVariants}
-            >
-              <Box
-                sx={{
-                  backgroundColor: theme.palette.background.paper,
-                  padding: 3,
-                  borderRadius: 1,
-                  boxShadow: 24,
-                  width: 300,
-                  textAlign: 'center',
-                  position: 'relative',
-                  transition: 'background-color 0.5s ease, border-radius 0.3s ease',
-                }}
-              >
-                <IconButton
-                  onClick={() => setLanguageModalOpen(false)}
-                  sx={{ position: 'absolute', top: 10, right: 10 }}
-                >
-                  <CloseIcon />
-                </IconButton>
-
-                <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-                  {t('selectLanguage')}
-                </Typography>
-
-                <Select
-                  value={i18n.language}
-                  onChange={(e) => changeLanguage(e.target.value)}
-                  fullWidth
-                  sx={{
-                    marginBottom: 2,
-                    borderRadius: 1,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: theme.palette.divider,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: theme.palette.primary.main,
-                    },
-                    '& .MuiSvgIcon-root': {
-                      color: theme.palette.text.primary,
-                    },
-                  }}
-                >
-                  <MenuItem value="tr">
-                    <Box display="flex" alignItems="center">
-                      <img
-                        src="https://flagcdn.com/w40/tr.png"
-                        alt="TR"
-                        style={{ marginRight: '10px' }}
-                      />
-                      {t('turkish')}
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="en">
-                    <Box display="flex" alignItems="center">
-                      <img
-                        src="https://flagcdn.com/w40/us.png"
-                        alt="EN"
-                        style={{ marginRight: '10px' }}
-                      />
-                      {t('english')}
-                    </Box>
-                  </MenuItem>
-                </Select>
+        <Box
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            padding: 3,
+            borderRadius: 1,
+            boxShadow: 24,
+            width: 300,
+            textAlign: 'center',
+            position: 'relative',
+          }}
+        >
+          <IconButton onClick={() => setLanguageModalOpen(false)} sx={{ position: 'absolute', top: 10, right: 10 }}>
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+            {t('selectLanguage')}
+          </Typography>
+          <Select
+            value={i18n.language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          >
+            <MenuItem value="tr">
+              <Box display="flex" alignItems="center">
+                <img src="https://flagcdn.com/w40/tr.png" alt="TR" style={{ marginRight: '10px' }} />
+                Türkçe
               </Box>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </MenuItem>
+            <MenuItem value="en">
+              <Box display="flex" alignItems="center">
+                <img src="https://flagcdn.com/w40/us.png" alt="EN" style={{ marginRight: '10px' }} />
+                English
+              </Box>
+            </MenuItem>
+          </Select>
+        </Box>
       </Modal>
     </>
   );
