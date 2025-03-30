@@ -8,7 +8,7 @@
     Select,
     MenuItem,
     TextField,
-    Grid2,
+    Grid,
     Paper,
     Alert,
     CircularProgress,
@@ -110,174 +110,174 @@
     };
 
     return (
-        <Box
-        component={motion.div}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: 'auto' }}
-        >
-        <Paper elevation={3} sx={{ p: { xs: 2, md: 4 } }}>
-            <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
-            {t('aiMode')}
-            </Typography>
-
-            {!gameData && (
-            <Box sx={{ mt: 4 }}>
-                <Grid2 container spacing={2} alignItems="center">
-                <Grid2 item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                    <InputLabel>{t('difficulty')}</InputLabel>
-                    <Select
-                        value={difficulty}
-                        label={t('difficulty')}
-                        onChange={(e) => setDifficulty(e.target.value)}
-                    >
-                        <MenuItem value="easy">{t('easy')}</MenuItem>
-                        <MenuItem value="medium">{t('medium')}</MenuItem>
-                        <MenuItem value="hard">{t('hard')}</MenuItem>
-                    </Select>
-                    </FormControl>
-                </Grid2>
-                <Grid2 item xs={12} sm={6}>
-                    <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={startGame}
-                    disabled={loading}
-                    startIcon={loading && <CircularProgress size={20} />}
-                    >
-                    {loading ? t('startingGame') : t('startGame')}
-                    </Button>
-                </Grid2>
-                </Grid2>
-            </Box>
-            )}
-
-            {loading && !gameData && (
-            <Box sx={{ mt: 4 }}>
-                <Skeleton variant="rectangular" height={200} />
-            </Box>
-            )}
-
-            {gameData && (
-            <Box sx={{ mt: 4 }}>
-                <HangmanDrawing wrongCount={wrongCount} />
-
-                <Box sx={{ mt: 4, mb: 3 }}>
-                <Typography variant="h6">{t('guessTheWord')}:</Typography>
-                <Typography variant="h4" sx={{ letterSpacing: '4px', mt: 1 }}>
-                    {displayWord.split('').map((char, index) => (
-                    <Box
-                        component="span"
-                        key={index}
-                        sx={{
-                        mx: 0.5,
-                        fontWeight: char !== '_' ? 'bold' : 'normal',
-                        color: char !== '_' ? theme.palette.primary.main : 'inherit'
-                        }}
-                    >
-                        {char}
-                    </Box>
-                    ))}
+        (<Box
+            component={motion.div}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: 'auto' }}
+            >
+            <Paper elevation={3} sx={{ p: { xs: 2, md: 4 } }}>
+                <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
+                {t('aiMode')}
                 </Typography>
-                </Box>
 
-                <Grid2 container spacing={2} sx={{ mb: 3 }}>
-                <Grid2 item xs={12} sm={4}>
-                    <Typography variant="subtitle1">
-                    {t('remainingLives')}: {gameData.remainingLives}
-                    </Typography>
-                </Grid2>
-                <Grid2 item xs={12} sm={4}>
-                    <Typography variant="subtitle1">
-                    {t('wrongLetters')}: {gameData.wrongLetters?.join(', ')}
-                    </Typography>
-                </Grid2>
-                <Grid2 item xs={12} sm={4}>
-                    <Typography variant="subtitle1">
-                    {t('discoveredLetters')}: {gameData.discoveredLetters?.join(', ')}
-                    </Typography>
-                </Grid2>
-                </Grid2>
-
-                {gameData.isOver ? (
-                <>
-                    <Alert severity={gameData.isWin ? 'success' : 'error'} sx={{ mt: 2 }}>
-                    {gameData.isWin ? t('youWon') : t('youLost')}
-                    </Alert>
-                    <Typography variant="body1" sx={{ mt: 2 }}>
-                    {t('theSentenceWas')}: "{gameData.sentence}"
-                    </Typography>
-                    <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={resetGame}
-                    sx={{ mt: 2 }}
-                    >
-                    {t('startNewGame')}
-                    </Button>
-                </>
-                ) : (
-                <Box sx={{ mt: 2 }}>
-                    <form onSubmit={handleSubmit}>
-                    <Grid2 container spacing={2} alignItems="center">
-                        <Grid2 item xs={12} sm={6}>
-                        <TextField
-                            label={t('guessALetter')}
-                            variant="outlined"
-                            value={guessLetter}
-                            onChange={(e) => {
-                            const value = e.target.value;
-                            if (/^[a-zA-ZçğıöşüÇĞIÖŞÜ]?$/.test(value)) {
-                                setGuessLetter(value.toLocaleUpperCase('tr-TR'));
-                            }
-                            }}
-                            sx={{ width: '100%' }}
-                            inputProps={{ maxLength: 1 }}
-                        />
-                        </Grid2>
-                        <Grid2 item xs={12} sm={6}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={guessing}
-                            startIcon={guessing && <CircularProgress size={20} />}
+                {!gameData && (
+                <Box sx={{ mt: 4 }}>
+                    <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} sm={6}>
+                        <FormControl fullWidth>
+                        <InputLabel>{t('difficulty')}</InputLabel>
+                        <Select
+                            value={difficulty}
+                            label={t('difficulty')}
+                            onChange={(e) => setDifficulty(e.target.value)}
                         >
-                            {guessing ? t('guessing') : t('guess')}
-                        </Button>
-                        </Grid2>
-                    </Grid2>
-                    </form>
-
-                    <Box sx={{ mt: 4 }}>
-                    <Button
+                            <MenuItem value="easy">{t('easy')}</MenuItem>
+                            <MenuItem value="medium">{t('medium')}</MenuItem>
+                            <MenuItem value="hard">{t('hard')}</MenuItem>
+                        </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Button
                         variant="contained"
-                        color="secondary"
+                        color="primary"
                         fullWidth
-                        onClick={aiGuess}
-                        disabled={aiGuessing}
-                        startIcon={aiGuessing && <CircularProgress size={20} />}
-                    >
-                        {aiGuessing ? t('aiGuessing') : t('aiGuess')}
-                    </Button>
-                    </Box>
+                        onClick={startGame}
+                        disabled={loading}
+                        startIcon={loading && <CircularProgress size={20} />}
+                        >
+                        {loading ? t('startingGame') : t('startGame')}
+                        </Button>
+                    </Grid>
+                    </Grid>
                 </Box>
                 )}
 
-                {message && (
-                <Alert severity="info" sx={{ mt: 2 }}>
-                    {message}
-                </Alert>
+                {loading && !gameData && (
+                <Box sx={{ mt: 4 }}>
+                    <Skeleton variant="rectangular" height={200} />
+                </Box>
                 )}
-            </Box>
-            )}
-        </Paper>
-        </Box>
+
+                {gameData && (
+                <Box sx={{ mt: 4 }}>
+                    <HangmanDrawing wrongCount={wrongCount} />
+
+                    <Box sx={{ mt: 4, mb: 3 }}>
+                    <Typography variant="h6">{t('guessTheWord')}:</Typography>
+                    <Typography variant="h4" sx={{ letterSpacing: '4px', mt: 1 }}>
+                        {displayWord.split('').map((char, index) => (
+                        <Box
+                            component="span"
+                            key={index}
+                            sx={{
+                            mx: 0.5,
+                            fontWeight: char !== '_' ? 'bold' : 'normal',
+                            color: char !== '_' ? theme.palette.primary.main : 'inherit'
+                            }}
+                        >
+                            {char}
+                        </Box>
+                        ))}
+                    </Typography>
+                    </Box>
+
+                    <Grid container spacing={2} sx={{ mb: 3 }}>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="subtitle1">
+                        {t('remainingLives')}: {gameData.remainingLives}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="subtitle1">
+                        {t('wrongLetters')}: {gameData.wrongLetters?.join(', ')}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="subtitle1">
+                        {t('discoveredLetters')}: {gameData.discoveredLetters?.join(', ')}
+                        </Typography>
+                    </Grid>
+                    </Grid>
+
+                    {gameData.isOver ? (
+                    <>
+                        <Alert severity={gameData.isWin ? 'success' : 'error'} sx={{ mt: 2 }}>
+                        {gameData.isWin ? t('youWon') : t('youLost')}
+                        </Alert>
+                        <Typography variant="body1" sx={{ mt: 2 }}>
+                        {t('theSentenceWas')}: "{gameData.sentence}"
+                        </Typography>
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={resetGame}
+                        sx={{ mt: 2 }}
+                        >
+                        {t('startNewGame')}
+                        </Button>
+                    </>
+                    ) : (
+                    <Box sx={{ mt: 2 }}>
+                        <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} sm={6}>
+                            <TextField
+                                label={t('guessALetter')}
+                                variant="outlined"
+                                value={guessLetter}
+                                onChange={(e) => {
+                                const value = e.target.value;
+                                if (/^[a-zA-ZçğıöşüÇĞIÖŞÜ]?$/.test(value)) {
+                                    setGuessLetter(value.toLocaleUpperCase('tr-TR'));
+                                }
+                                }}
+                                sx={{ width: '100%' }}
+                                inputProps={{ maxLength: 1 }}
+                            />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                disabled={guessing}
+                                startIcon={guessing && <CircularProgress size={20} />}
+                            >
+                                {guessing ? t('guessing') : t('guess')}
+                            </Button>
+                            </Grid>
+                        </Grid>
+                        </form>
+
+                        <Box sx={{ mt: 4 }}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            fullWidth
+                            onClick={aiGuess}
+                            disabled={aiGuessing}
+                            startIcon={aiGuessing && <CircularProgress size={20} />}
+                        >
+                            {aiGuessing ? t('aiGuessing') : t('aiGuess')}
+                        </Button>
+                        </Box>
+                    </Box>
+                    )}
+
+                    {message && (
+                    <Alert severity="info" sx={{ mt: 2 }}>
+                        {message}
+                    </Alert>
+                    )}
+                </Box>
+                )}
+            </Paper>
+        </Box>)
     );
     }
 
